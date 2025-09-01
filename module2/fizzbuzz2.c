@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
 int main(int argc, char *argv[]){
 char *output;
@@ -14,25 +15,17 @@ for(i=1;i<=input_number;i++){
 	int counter_count = 0;
 	output = malloc(9);
 	if(i%3==0){
-		char fizz[] = "fizz";
-		
-		for(counter=0;counter<4;counter++)
-			*(output+counter)=fizz[counter];
-		counter_count = counter;
+		strcat(output,"fizz");
 	}
 	if(i%5==0){
-		char buzz[] = "buzz";
-		for(counter=0;counter<4;counter++){
-			*(output+counter+counter_count)=buzz[counter];
-		}
+		strcat(output,"buzz");
 	}	
 	
-	if(i%3 == 0 || i%5 == 0){
+	if(i%3 != 0 & i%5 != 0)
+		sprintf(output, "%d", i);
+
 		printf("%s\n",output);
-	}
-	else{
-		printf("%d\n",i);
-	}
+
 }
 
 return 0;
