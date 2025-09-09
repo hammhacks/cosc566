@@ -56,7 +56,43 @@ int main(int argc, char **argv) {
   }
 
   struct params p;
+  ssize_t read; // For the return value of getline()
+  char *line = NULL;
+  size_t len = 0;
+  int node_count=0;
+
+  sscanf(argv[1],"%d",&p.initial_range);
+  sscanf(argv[2],"%d",&p.jump_range);
+  sscanf(argv[3],"%d",&p.num_jumps);
+  sscanf(argv[4],"%d",&p.initial_power);
+  sscanf(argv[5],"%lf",&p.power_reduction);
+
+  //checking
+  printf("initial range: %d\n",p.initial_range);
+  printf("jump range: %d\n",p.jump_range);
+  printf("num_jumps: %d\n",p.num_jumps);
+  printf("initial_power: %d\n",p.initial_power);
+  printf("power_reduction: %f\n",p.power_reduction);
   struct answer a = {0};
+
+  // ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+
+  struct node head;
+  struct node next;
+
+  while ((read = getline(&line, &len, stdin)) != -1) {
+        if(node_count == 1){
+          head.x = atoi(&line[0]);
+          head.y = atoi(&line[2]);
+          printf("head.x is: %d\n",head.x);
+          printf("head.y is: %d\n",head.y);
+        }
+        printf("Read %zd characters: %s", read, line);
+        node_count +=1;
+
+    }
+
+    
 
 
 cleanup:
