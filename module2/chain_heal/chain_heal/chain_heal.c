@@ -3,14 +3,15 @@
 #include <string.h>
 #include <stdbool.h>
 
-struct node {
+typedef struct node {
   char *name;
   int x, y;
   int cur_PP, max_PP;
   int adj_size;
   bool visited;
   struct node **adj_list;
-};
+  struct node *previous;
+}node;
 
 struct params {
   int initial_range;
@@ -29,6 +30,7 @@ struct answer {
 };
 
 struct node **create_nodes_array(size_t *n) {
+  
 }
 
 bool adjacent(int jump_range, struct node *a, struct node *b) {
@@ -59,7 +61,7 @@ int main(int argc, char **argv) {
   ssize_t read; // For the return value of getline()
   char *line = NULL;
   size_t len = 0;
-  int node_count=0;
+ 
 
   sscanf(argv[1],"%d",&p.initial_range);
   sscanf(argv[2],"%d",&p.jump_range);
@@ -75,22 +77,45 @@ int main(int argc, char **argv) {
   printf("power_reduction: %f\n",p.power_reduction);
   struct answer a = {0};
 
-  // ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+  struct node *current;
+  current = malloc(sizeof(node));
+  struct node *previous;
+  
 
-  struct node head;
-  struct node next;
-
+  int node_count=0;
   while ((read = getline(&line, &len, stdin)) != -1) {
-        if(node_count == 1){
-          head.x = atoi(&line[0]);
-          head.y = atoi(&line[2]);
-          printf("head.x is: %d\n",head.x);
-          printf("head.y is: %d\n",head.y);
-        }
-        printf("Read %zd characters: %s", read, line);
+      node *previous = malloc(sizeof(node));
+      previous = current;
+
+      current = malloc(sizeof(node));
+      current->name = malloc(50000); //memory check
+      sscanf(line, "%d %d %d %d %s", &current->x, &current->y, &current->cur_PP, &current->max_PP, current->name);
+
+      if(node_count == 0)
+        current->previous = NULL;
+      else
+        current->previous = previous;
+
+      //printf("AAAcurrent address: %p\n",current);
+      //printf("AAAprior address: %p\n",current->adj_list);
+    
         node_count +=1;
 
     }
+
+  node **nodes_array[node_count];
+  
+  int countdown = node_count;
+  while(current->previous != NULL){
+    printf("current name is: %s\n",current->name);
+    nodes_array[countdown] = &current;
+    current = current->previous;
+    countdown -=1;
+  }
+
+  int i=0;
+  for(i=0;i<node_count;i++)
+    printf("array at %d: %s",i,**nodes_array[i]);
 
     
 
@@ -99,3 +124,48 @@ cleanup:
 
   return 0;
 }
+
+
+          /*printf("head.x is: %d\n",head.x);
+          printf("head.y is: %d\n",head.y);
+          printf("head.cur_PP is: %d\n",head.cur_PP);
+          printf("head.max_PP is: %d\n",head.max_PP);
+          printf("head.name is: %s\n",head.name);*/
+
+                    //node *previous = malloc(sizeof(node));
+
+          //current.adj_list = (struct node **) previous;
+
+
+
+          /*current->adj_list = (struct node**) previous;
+
+
+
+        if(node_count == 0){
+          printf(line);
+          node *current = malloc(sizeof(node));
+          current->name = malloc(50000); //memory check
+          sscanf(line, "%d %d %d %d %s", &current->x, &current->y, &current->cur_PP, &current->max_PP, current->name);
+          current->adj_list = NULL;
+          //printf("current name is: %s\n",current->name);
+          printf("STARTcurrent address is %p\n",current);
+
+        }
+        else{
+          printf(line);
+          printf("BBBcurrent address is: %p\n",current);
+          node *previous = malloc(sizeof(node));
+          previous = current;
+          printf("previous name is: %s\n",previous->name);
+          //printf("Acurrent address is: %p\n",current);
+          //printf("Aprevious address is: %p\n",previous);
+          current = malloc(sizeof(node));
+          //printf("Bcurrent address is: %p\n",current);
+          //printf("Bprevious address is: %p\n",previous);
+          current->name = malloc(50000); //memory check
+          sscanf(line, "%d %d %d %d %s", &current->x, &current->y, &current->cur_PP, &current->max_PP, current->name);
+
+          current->adj_list = (struct node**) previous;
+          //printf("The previous name is: %s\n",previous->name);
+        }*/
