@@ -106,18 +106,17 @@ int main(int argc, char **argv) {
   node **nodes_array[node_count];
   
   int countdown = node_count;
-  while(current->previous != NULL){
+  while(current != NULL){
     printf("current name is: %s\n",current->name);
-    nodes_array[countdown] = &current;
+    nodes_array[countdown-1] = (struct node **)current;
     current = current->previous;
     countdown -=1;
   }
 
   int i=0;
   for(i=0;i<node_count;i++)
-    printf("array at %d: %s",i,**nodes_array[i]);
+    printf("array at %d: %s\n",i,**nodes_array[i]);
 
-    
 
 
 cleanup:
