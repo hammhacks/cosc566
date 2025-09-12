@@ -77,46 +77,46 @@ int main(int argc, char **argv) {
   printf("power_reduction: %f\n",p.power_reduction);
   struct answer a = {0};
 
-  struct node *current;
-  current = malloc(sizeof(node));
-  struct node *previous;
-  
 
-  int node_count=0;
+  struct node *current = NULL;
+  struct node *previous = NULL;
+
+  int node_count = 0;
   while ((read = getline(&line, &len, stdin)) != -1) {
-      node *previous = malloc(sizeof(node));
-      previous = current;
+    current = malloc(sizeof(node));
+    current->name = malloc(50000);
+    sscanf(line, "%d %d %d %d %s", &current->x, &current->y, &current->cur_PP, &current->max_PP, current->name);
 
-      current = malloc(sizeof(node));
-      current->name = malloc(50000); //memory check
-      sscanf(line, "%d %d %d %d %s", &current->x, &current->y, &current->cur_PP, &current->max_PP, current->name);
-
-      if(node_count == 0)
-        current->previous = NULL;
-      else
-        current->previous = previous;
-
-      //printf("AAAcurrent address: %p\n",current);
-      //printf("AAAprior address: %p\n",current->adj_list);
-    
-        node_count +=1;
-
+    if(previous != NULL){
+        current->adj_list = malloc(sizeof(node*));
+        current->adj_list[0] = previous;
+        current->adj_size = 1;
+    } else {
+        current->adj_list = NULL;
+        current->adj_size = 0;
     }
 
-  node **nodes_array[node_count];
-  
-  int countdown = node_count;
-  while(current != NULL){
-    printf("current name is: %s\n",current->name);
-    nodes_array[countdown-1] = (struct node **)current;
-    current = current->previous;
-    countdown -=1;
+    previous = current;
+    node_count++;
   }
 
-  int i=0;
-  for(i=0;i<node_count;i++)
-    printf("array at %d: %s\n",i,**nodes_array[i]);
 
+node **nodes_array = malloc(sizeof(node*) * node_count);
+int countdown = node_count;
+while(current != NULL){
+    nodes_array[countdown-1] = current;
+    if(current->adj_size > 0)
+        current = current->adj_list[0];
+    else
+        current = NULL;
+    countdown--;
+}
+
+// print
+for(int i=0;i<node_count;i++){
+  printf("array at %d: %s\n", i, nodes_array[i]->name);
+  printf("array_x at %d: %d\n",i,nodes_array[i]->x);
+}
 
 
 cleanup:
