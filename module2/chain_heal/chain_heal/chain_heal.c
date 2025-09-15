@@ -18,7 +18,7 @@ struct params {
   int num_jumps;
   int initial_power;
   double power_reduction;
-};
+}params;
 
 struct answer {
   int best_path_length;
@@ -28,6 +28,30 @@ struct answer {
   int best_healing;
 };
 
+void scan_and_print_input(struct params *p,char **argv){
+  sscanf(argv[1],"%d",&p->initial_range);
+  sscanf(argv[2],"%d",&p->jump_range);
+  sscanf(argv[3],"%d",&p->num_jumps);
+  sscanf(argv[4],"%d",&p->initial_power);
+  sscanf(argv[5],"%lf",&p->power_reduction);
+
+  printf("initial range: %d\n",p->initial_range);
+  printf("jump range: %d\n",p->jump_range);
+  printf("num_jumps: %d\n",p->num_jumps);
+  printf("initial_power: %d\n",p->initial_power);
+  printf("power_reduction: %f\n",p->power_reduction);
+
+
+}
+
+void print_linked_list(node *input_node) {
+    node *curr = input_node;
+    while (curr != NULL) {
+        printf("name is: %s\n", curr->name);
+        curr = (curr->adj_list != NULL) ? *(curr->adj_list) : NULL;
+    }
+    printf("end...\n");
+}
 
 
 struct node **create_nodes_array(size_t *n) {
@@ -79,28 +103,7 @@ void print_best(struct params *p, struct answer *a) {
 void dfs(struct params *p, struct answer *a, int depth, struct node *n) {
 }
 
-void scan_and_print_input(struct params p,char **argv){
-  sscanf(argv[1],"%d",&p.initial_range);
-  sscanf(argv[2],"%d",&p.jump_range);
-  sscanf(argv[3],"%d",&p.num_jumps);
-  sscanf(argv[4],"%d",&p.initial_power);
-  sscanf(argv[5],"%lf",&p.power_reduction);
 
-  printf("initial range: %d\n",p.initial_range);
-  printf("jump range: %d\n",p.jump_range);
-  printf("num_jumps: %d\n",p.num_jumps);
-  printf("initial_power: %d\n",p.initial_power);
-  printf("power_reduction: %f\n",p.power_reduction);
-
-
-}
-
-void create_linked_list(int *node_count,struct node *current){
-
-
-
-
-}
 
 node *create_node(struct node *node_input) {
     node *new_node = malloc(sizeof(node));
@@ -127,14 +130,7 @@ void append(node *input_node,node *master_list) {
     *(curr->adj_list) = new_node;
 }
 
-void print_linked_list(node *input_node) {
-    node *curr = input_node;
-    while (curr != NULL) {
-        printf("name is: %s\n", curr->name);
-        curr = (curr->adj_list != NULL) ? *(curr->adj_list) : NULL;
-    }
-    printf("end...\n");
-}
+
 
 int main(int argc, char *argv[]) {
   if(argc < 6) {
@@ -142,7 +138,7 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  struct params p;
+  struct params *p = malloc(sizeof(params));
   int node_count = 0;
   int i;
   struct answer a = {0};
@@ -184,60 +180,50 @@ int main(int argc, char *argv[]) {
   int countdown = node_count;
 
   for(i=0;i<node_count;i++){
-    if(i==0)
-      nodes_array[i] = list;
-    else
-      nodes_array[i] = list;
+    nodes_array[i] = list;
 
     if(list->adj_list != NULL)
       list = *(list->adj_list);
-    printf("nodes_array[i] name is now: %s\n",nodes_array[i]->name);
+    //printf("nodes_array[i] name is now: %s\n",nodes_array[i]->name);
   }
 
 
-// clear adj_list....
 
-for(i=0;i<node_count;i++){
-  nodes_array[i]->adj_list = malloc(sizeof(node)*node_count);
-}
-
-/*
-// section 5: populate adjacency list on array of nodes
+// section 5: populate adjacency list on array of nodes (populate graph?)
 int x,t;
 for(i=0;i<node_count;i++){
   struct node **indexes = malloc(node_count*sizeof(node));
   int node_found_count=0;
   for(x=0;x<node_count;x++){
     if(x!=i){
-      if(adjacent(p.jump_range,nodes_array[i],nodes_array[x])){
+      if(adjacent(p->jump_range,nodes_array[i],nodes_array[x])){
         indexes[node_found_count++]=nodes_array[x];
       }
     }
   }
+  printf("node count found is: %d\n",node_found_count);
   nodes_array[i]->adj_list = malloc(sizeof(node)*node_found_count);
+  nodes_array[i]->adj_size = node_found_count;
   nodes_array[i]->adj_list = indexes;
-
-  nodes_array[i]->adj_list = (struct node **) indexes;
   printf("pointer for nodes_array at %d is: %p\n",i,nodes_array[i]->adj_list);
 }
 
 
 
-
-for(i=2;i<node_count;i++){
-  struct node **templist = malloc(sizeof(node)*node_count);
-  templist = (*(nodes_array+i))->adj_list;
-  printf("current node name is: %s\n",(*(nodes_array+i))->name);
-  x=0;
-  printf("nodeNAME: %s\n",(*(templist))->name);
-  while(x<2){
-    printf("The adj node is: %s\n",(*(templist+x))->name);
-    x++;
+//verify that the graph looks right lol
+for(i=0;i<node_count;i++){
+  printf("The player is: %s\n",nodes_array[i]->name);
+  //printf("\tplayer x value is: %d\n",nodes_array[i]->x);
+  //printf("\tplayer y value is: %d\n",nodes_array[i]->y);
+  printf("nodes_array size is: %d\n",nodes_array[i]->adj_size);
+  struct node **sublist = malloc(sizeof(node)*node_count);
+  sublist=nodes_array[i]->adj_list;
+  for(x=0;x<nodes_array[i]->adj_size;x++){
+    
+    printf("\tadjacent player is: %s\n",(*(sublist+x))->name);
   }
 
 }
-
-*/
 
 cleanup:
 
