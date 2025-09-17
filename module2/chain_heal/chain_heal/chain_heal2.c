@@ -44,9 +44,8 @@ void scan_and_print_input(struct params *p,char **argv){
 
 }
 
-void print_linked_list(node *list) {
-    node *curr = malloc(sizeof(node *));
-    curr->name = malloc(50*sizeof(char));
+void print_linked_list(node *input_node) {
+    node *curr = input_node;
     while (curr != NULL) {
         printf("name is: %s\n", curr->name);
         curr = (curr->adj_list != NULL) ? *(curr->adj_list) : NULL;
@@ -102,45 +101,31 @@ void print_best(struct params *p, struct answer *a) {
 }
 
 void dfs(struct params *p, struct answer *a, int depth, struct node *n) {
-  if(n->visited == true){
-    return;
-  }
-  else{
-    a->current = (struct node **)n;
-    depth++;
-    if(depth==6) //may need to swap for max depth
-      check_best(p,a);
-  }
-
-
 }
 
 
 
 node *create_node(struct node *node_input) {
-    //node *new_node = malloc(sizeof(node *));
-    node *new_node;
-    //new_node->name = malloc(sizeof(node_input->name));
+  printf("node input name is: %s\n",node_input->name);
+    node *new_node = malloc(sizeof(node*));
     new_node->x = node_input->x;
     new_node->y = node_input->y;
     new_node->cur_PP = node_input->cur_PP;
     new_node->max_PP = node_input->max_PP;
-    printf("node_input->name is: %s\n",node_input->name);
+    new_node->name = malloc(50*sizeof(char));
+    new_node->name = node_input->name;
     new_node->adj_list = NULL; // initially no link
     return new_node;
 }
 
-void append(struct node *input_node,struct node *master_list) {
+void append(node *input_node,node *master_list) {
     node *curr = master_list;
 
     while (curr->adj_list != NULL) {
         curr = *(curr->adj_list);
     }
 
-    printf("HEY! input_node name is: %s\n",input_node->name);
-
-    node *new_node = malloc(sizeof(node *));
-    new_node = create_node(input_node);
+    node *new_node = create_node(input_node);
 
     curr->adj_list = malloc(sizeof(node *));
     *(curr->adj_list) = new_node;
@@ -159,56 +144,47 @@ int main(int argc, char *argv[]) {
   int i;
   struct answer a = {0};
  
-  // section 1 and 2: read in the print parameters
+  // section 1: read in the print parameters
   scan_and_print_input(p,argv);
 
 
   // section 3: set up nodes to read in input and then create a linked list
-  //struct node *list = malloc(sizeof(node *));
+  struct node *list = malloc(sizeof(node*));
+  list->name = malloc(50*sizeof(char));
 
   char *line = NULL;
   size_t len = 0;
-  ssize_t read;
-  
-  struct node *current;
-  struct node *head=NULL;
-  struct node *next=NULL;
+  ssize_t read; // getline() usage
+
+  struct node *current = NULL;
 
   while ((read = getline(&line, &len, stdin)) != -1) {
-
-    current = malloc(sizeof(node*));
+    current = malloc(sizeof(node));
     current->name = malloc(50*sizeof(char));
     sscanf(line, "%d %d %d %d %s", &current->x, &current->y, &current->cur_PP, &current->max_PP, current->name);
 
-    if (head == NULL){
-      head = malloc(sizeof(node*));
-      head->name = malloc(50*sizeof(char));
-      head = current;
-      next = malloc(sizeof(node*));
-      next = *(head->adj_list);
-      next->name = malloc(50*sizeof(char));
+    if(node_count == 0){
+      list = current;
     }
     else{
-      next = current;
-      next = *(current->adj_list);
+      append(current,list);
     }
-
-
+    node_count++;
   }
 
 
-  print_linked_list(head);
+  print_linked_list(list);
 
-/*
+
   // section 4: fill linked list nodes into an array
   struct node **nodes_array = malloc(sizeof(node*) * node_count);
   int countdown = node_count;
 
   for(i=0;i<node_count;i++){
-    nodes_array[i] = list[i];
+    nodes_array[i] = list;
 
-    //if(list->adj_list != NULL)
-      //list = *(list->adj_list);
+    if(list->adj_list != NULL)
+      list = *(list->adj_list);
     //printf("nodes_array[i] name is now: %s\n",nodes_array[i]->name);
   }
 
@@ -250,6 +226,7 @@ for(i=0;i<node_count;i++){
 
 }
 
+
 //set each node's visited to false and get urgosa
 node *urgosa = malloc(sizeof(node));
 for(i=0;i<node_count;i++){
@@ -262,18 +239,31 @@ for(i=0;i<node_count;i++){
   }
 }
 
-
-a.best = malloc(sizeof(node));
-a.current = malloc(sizeof(node));
-
-/*for (int i = 0; i < urgosa->adj_size; i++) {
-        node *neigh_node = urgosa->adj_list[i];
-        //dfs(neigh_node, &answer, max_depth);
-        dfs(p,answer,max_depth,neigh_node);
-    }
-*/
-
 cleanup:
 
   return 0;
 }
+
+
+/*
+for(int i=0;i<node_count;i++){
+  printf("address of %d: %p\n",i,&nodes_array[i]);
+  printf("array at %d: %s\n", i, nodes_array[i]->name);
+  printf("array_x at %d: %d\n",i,nodes_array[i]->x);
+  printf("array_y at %d: %d\n",i,nodes_array[i]->y);
+  printf("adj_list at %d: %p\n",i,nodes_array[i]->adj_list);
+} */
+
+//bool adj = adjacent(p.jump_range,nodes_array[1],nodes_array[2]);
+
+  //printf("-Xname: %s\n",nodes_array[i]->name);
+  //for(t=0;t<node_found;t++)
+  //printf("t-%s\n",temp_nodes[t]->name);
+
+
+  /*printf("current adjlist name is: %s\n",curr->name);
+printf("adj list values: \n");
+struct node *temp1 = curr->adj_list[0];
+struct node *temp2 = curr->adj_list[1];
+printf("name 1: %s\n",temp1->name);
+printf("name 2: %s\n",temp2->name);*/

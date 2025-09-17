@@ -13,6 +13,10 @@ typedef struct node {
   //struct node *previous;
 }node;
 
+struct node2{
+  char x;
+};
+
 struct params {
   int initial_range;
   int jump_range;
@@ -21,11 +25,24 @@ struct params {
   double power_reduction;
 };
 
+void append_node(struct node *input_node,struct node **list ){
+  
+  if(list == NULL){
+    printf("here1\n");
 
-void append(node *node_input,node *previous){
-  node_input->adj_list = malloc(50000);
-  *(node_input->adj_list) = previous;
-  node_input=previous;
+    list = (struct node **) input_node;
+    printf("list value name: %s\n",(*list)->name);
+  }
+  else{
+    printf("here2\n");
+      struct node *current = *list;
+      while(current->adj_list != NULL){
+        current = *(current)->adj_list;
+      }
+
+      current->adj_list = (struct node **)input_node; 
+
+  }
 
 
 }
@@ -34,45 +51,72 @@ void append(node *node_input,node *previous){
 
 int main(int argc, char **argv) {
 
-  struct params p;
-  ssize_t read; // For the return value of getline()
-  char *line = NULL;
-  size_t len = 0;
- 
-  struct node *current = malloc(sizeof(node));
-  current->name = malloc(1000);
-  struct node *previous = malloc(50000);
-  int node_count = 0;
+  struct node *list;
+  struct node *node1;
+  struct node *node2;
+  struct node *node3;
 
-  while ((read = getline(&line, &len, stdin)) != -1) {
 
-    sscanf(line, "%d %d %d %d %s", &current->x, &current->y, &current->cur_PP, &current->max_PP, current->name);
-    append(current,previous);
-    node_count++;
-  }
 
-  int i;
-  for(i=0;i<node_count;i++){
-    printf("node name is: %s\n",current->name);
-    current = *(current->adj_list);
 
-  }
+  node1 = malloc(sizeof(node));
+  node1->name = malloc(50*sizeof(char));
+  node1->name = "Jeff";
+  node1->adj_list = malloc(50*sizeof(node *));
+
+
+  node2=malloc(sizeof(node));
+  node2->name = malloc(50*sizeof(char));
+  node2->name = "Sally";
+  node2->adj_list = malloc(sizeof(node*));
+  node1->adj_list = (struct node **)node2;
+
+
+  node3=malloc(sizeof(node));
+  node3->name = malloc(50*sizeof(char));
+  node3->name = "Tom";
+  node3->adj_list = malloc(sizeof(node*));
+  node2->adj_list = (struct node **)node3;
+  //append_node(node3,list);
+  //*(list+2)=node3;
+
+  struct node *temp = node1;
+
+  printf("silly test is: %s\n",*(*(node1->adj_list)->adj_list)->name);
+
+
+
+
 
   return 0;
 }
 
 /*
-  int nodecount=5;
-  nodelist = malloc(nodecount*sizeof(node));
+
+node1 = malloc(sizeof(node));
+  node1->name = malloc(50*sizeof(char));
+  node1->name = "Jeff";
+  node1->adj_list = malloc(50*sizeof(node *));
+  //append_node(node1,list);
+  *(list)=node1;
+
+  node2=malloc(sizeof(node));
+  node2->name = malloc(50*sizeof(char));
+  node2->name = "Sally";
+  node2->adj_list = malloc(sizeof(node*));
+  node1->adj_list = (struct node **)node2;
+  //append_node(node2,list);
+  *(list+1)=node2;
+
+  node3=malloc(sizeof(node));
+  node3->name = malloc(50*sizeof(char));
+  node3->name = "Tom";
+  node3->adj_list = malloc(sizeof(node*));
+  node2->adj_list = (struct node **)node3;
+  //append_node(node3,list);
+  *(list+2)=node3;
 
   int i;
-  for(i=0;i<nodecount;i++){
-    struct node *temp=malloc(sizeof(node));
-    temp->id=i;
-    *(nodelist+i) = temp;
-  }
-  
-  for(i=0;i<nodecount;i++){
-    printf("node id is: %d\n",(*(nodelist+i))->id);
-  }
-    */
+  for(i=0;i<3;i++){
+  printf("name: %s\n",(*list)->name);
+  list++;}*/
