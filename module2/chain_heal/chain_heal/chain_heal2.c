@@ -101,6 +101,36 @@ void print_best(struct params *p, struct answer *a) {
 }
 
 void dfs(struct params *p, struct answer *a, int depth, struct node *n) {
+  
+  if (n->visited)
+    return;
+
+
+  n->visited = true;
+  a->current[a->current_path_length++] = n;
+  if (a->current_path_length >= p->num_jumps) {
+    check_best(p, a);
+    a->current_path_length-=1;
+    n->visited = false;
+    return;
+  }
+
+  // Recurse to all adjacent nodes
+  bool progressed = false;
+  for (int i = 0; i < n->adj_size; ++i) {
+    struct node *nbr = n->adj_list[i];
+    if (!nbr->visited) {
+      progressed = true;
+      dfs(p, a, depth + 1, nbr);
+    }
+  }
+
+  // Even if we didn't advance further, the current (shorter) path could be best
+  check_best(p, a);
+
+  // backtrack
+  a->current_path_length--;
+  n->visited = false;
 }
 
 
@@ -238,6 +268,18 @@ for(i=0;i<node_count;i++){
     printf("Urgosa is at node %d\n",i);
   }
 }
+
+a.best = malloc(sizeof(node));
+a.current = malloc(sizeof(node));
+
+for (int i = 0; i < urgosa->adj_size; i++) {
+        node *neigh_node = urgosa->adj_list[i];
+        //dfs(neigh_node, &answer, max_depth);
+        dfs(p,a,6,neigh_node);
+}
+
+
+
 
 cleanup:
 
